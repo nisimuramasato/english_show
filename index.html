@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enter Text & Click to Animate</title>
+    <style>
+       
+         /* アニメーション定義 */
+        @keyframes fadeEnlargeFade {
+            0% {
+                opacity: 0;
+                font-size: 10px;
+            }
+            70% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+                font-size: 90px;
+            }
+            100% {
+                opacity: 0;
+                font-size: 6000px;
+            }
+        }
+
+        /* アニメーションを適用するクラス */
+        .animated-text {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -20%);
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+            color: white;
+            animation: fadeEnlargeFade 5s ease-in-out forwards;
+            white-space: nowrap;
+        }
+
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        textarea {
+            width: 300px;
+            height: 100px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            border: none;
+            background-color: black;
+            color: white;
+            padding: 8px;
+            resize: none;
+           box-shadow: 4px 4px 8px rgba(128, 128, 128, 0.6); /* グレーのシャドー */
+    margin-right: 20px; /* ブラウザの右からの距離 */
+    display: block;
+    margin-left: auto;  /* 左側を自動にして右寄せを実現 */
+
+        }
+
+        .input-area {
+            text-align: right;
+            margin-top: 48px;
+            font-family: Arial, sans-serif;
+        }
+
+        .top-right-button {
+            position: absolute;
+            top: 6px;
+            right: 10px;
+            padding: 8px 16px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .top-right-time {
+            position: absolute;
+            top: 6px;
+            right: 80px;
+        }
+
+        input[type="number"] {
+            background-color: black;
+            color: white;
+            border: none;
+            width: 40px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <button class="top-right-button" onclick="prepareText()">Script</button>
+    <div class="input-area">
+        <textarea id="userInput" placeholder="Please input here"></textarea>
+    </div>
+    
+    <p id="text"></p>
+    <div class="top-right-time">
+        <input type="number" id="animationTime" placeholder="秒数" min="1">
+    </div>
+
+    <script>
+          let sentences = [];
+        let index = -1;
+
+        function prepareText() {
+            let input = document.getElementById("userInput").value;
+            sentences = input.split("\n").map(s => s.trim()).filter(s => s.length > 0);
+            index = -1;
+            document.getElementById("text").innerHTML = "";
+            document.body.removeEventListener("click", nextSentenceHandler);
+            document.body.addEventListener("click", nextSentenceHandler);
+        }
+
+        function nextSentenceHandler() {
+            if (index < sentences.length - 1) {
+                index++;
+                document.getElementById("text").innerHTML = "";
+
+                let newSpan = document.createElement("span");
+                newSpan.textContent = sentences[index];
+                newSpan.classList.add("animated-text");
+                document.getElementById("text").appendChild(newSpan);
+                document.getElementById("text").appendChild(document.createElement("br"));
+
+                let animationTime = document.getElementById("animationTime").value || 3;
+                newSpan.style.animation = `fadeEnlargeFade ${animationTime}s ease-in-out forwards`;
+            }
+        }
+      
+    </script>
+</body>
+</html>

@@ -1,143 +1,275 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enter Text & Click to Animate</title>
-    <style>
-       
-         /* アニメーション定義 */
-        @keyframes fadeEnlargeFade {
-            0% {
-                opacity: 0;
-                font-size: 10px;
-            }
-            70% {
-                opacity: 1;
-            }
-            80% {
-                opacity: 1;
-                font-size: 90px;
-            }
-            100% {
-                opacity: 0;
-                font-size: 6000px;
-            }
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enter Text & Animate with GSAP</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
 
-        /* アニメーションを適用するクラス */
-        .animated-text {
-            position: fixed;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -20%);
-            font-family: Arial, sans-serif;
-            font-weight: bold;
-            color: white;
-            animation: fadeEnlargeFade 5s ease-in-out forwards;
-            white-space: nowrap;
-        }
+    .animated-text {
+      position: fixed;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -20%);
+      font-weight: bold;
+      color: white;
+      white-space: nowrap;
+      font-size: 10px;
+      opacity: 0;
+    }
 
-        body {
-            background-color: black;
-            color: white;
-        }
+    textarea {
+      width: 300px;
+      height: 100px;
+      font-size: 14px;
+      background-color: black;
+      color: white;
+      padding: 8px;
+      resize: none;
+      box-shadow: 4px 4px 8px rgba(128, 128, 128, 0.6);
+      margin-right: 20px;
+      display: block;
+      margin-left: auto;
+      border: none;
+    }
 
-        .hidden {
-            display: none;
-        }
+    .input-area {
+      text-align: right;
+      margin-top: 48px;
+    }
 
-        textarea {
-            width: 300px;
-            height: 100px;
-            font-size: 14px;
-            font-family: Arial, sans-serif;
-            border: none;
-            background-color: black;
-            color: white;
-            padding: 8px;
-            resize: none;
-           box-shadow: 4px 4px 8px rgba(128, 128, 128, 0.6); /* グレーのシャドー */
-    margin-right: 20px; /* ブラウザの右からの距離 */
-    display: block;
-    margin-left: auto;  /* 左側を自動にして右寄せを実現 */
+    .top-right-button {
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      padding: 8px 16px;
+      background-color: black;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
 
-        }
+    .top-right-time {
+      position: absolute;
+      top: 6px;
+      right: 80px;
+    }
 
-        .input-area {
-            text-align: right;
-            margin-top: 48px;
-            font-family: Arial, sans-serif;
-        }
-
-        .top-right-button {
-            position: absolute;
-            top: 6px;
-            right: 10px;
-            padding: 8px 16px;
-            background-color: black;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-
-        .top-right-time {
-            position: absolute;
-            top: 6px;
-            right: 80px;
-        }
-
-        input[type="number"] {
-            background-color: black;
-            color: white;
-            border: none;
-            width: 40px;
-        }
-
-
-    </style>
+    input[type="number"] {
+      background-color: black;
+      color: white;
+      border: none;
+      width: 40px;
+    }
+  </style>
 </head>
 <body>
-    <button class="top-right-button" onclick="prepareText()">Script</button>
-    <div class="input-area">
-        <textarea id="userInput" placeholder="Please input here"></textarea>
-    </div>
+  <button class="top-right-button" onclick="prepareText()">Script</button>
+  <div class="input-area">
+    <textarea id="userInput" placeholder="Please input here"></textarea>
+  </div>
+  <p id="text"></p>
+  <div class="top-right-time">
+    <input type="number" id="animationTime" placeholder="秒数" min="1">
+  </div>
+
+  <script>
+    let sentences = [];
+    let index = -1;
     
-    <p id="text"></p>
-    <div class="top-right-time">
-        <input type="number" id="animationTime" placeholder="秒数" min="1">
-    </div>
+    onComplete: () => {
+  gsap.to(newSpan, {
+    opacity: 0,
+    fontSize: "600px",
+    duration: animationTime * 0.2,
+    ease: "power2.in",
+    onComplete: () => newSpan.remove()
+  });
+}
 
-    <script>
-          let sentences = [];
-        let index = -1;
+gsap.fromTo(newSpan, 
+  { opacity: 0, fontSize: "10px", color: "#888", textShadow: "0px 0px 0px #fff" },
+  {
+    opacity: 1,
+    fontSize: "90px",
+    color: "#fff",
+    textShadow: "0px 0px 20px #fff",
+    duration: animationTime * 0.8,
+    ease: "power4.out"
+  }
+);
 
-        function prepareText() {
-            let input = document.getElementById("userInput").value;
-            sentences = input.split("\n").map(s => s.trim()).filter(s => s.length > 0);
-            index = -1;
-            document.getElementById("text").innerHTML = "";
-            document.body.removeEventListener("click", nextSentenceHandler);
-            document.body.addEventListener("click", nextSentenceHandler);
-        }
 
-        function nextSentenceHandler() {
-            if (index < sentences.length - 1) {
-                index++;
-                document.getElementById("text").innerHTML = "";
 
-                let newSpan = document.createElement("span");
-                newSpan.textContent = sentences[index];
-                newSpan.classList.add("animated-text");
-                document.getElementById("text").appendChild(newSpan);
-                document.getElementById("text").appendChild(document.createElement("br"));
+gsap.to("body", {
+  backgroundColor: "#222",
+  duration: 0.5,
+  yoyo: true,
+  repeat: 1,
+  ease: "power1.inOut"
+});
 
-                let animationTime = document.getElementById("animationTime").value || 3;
-                newSpan.style.animation = `fadeEnlargeFade ${animationTime}s ease-in-out forwards`;
+
+
+
+document.body.addEventListener("click", (e) => {
+  let ripple = document.createElement("div");
+  ripple.style.position = "absolute";
+  ripple.style.borderRadius = "50%";
+  ripple.style.background = "rgba(255,255,255,0.3)";
+  ripple.style.width = ripple.style.height = "20px";
+  ripple.style.left = `${e.clientX}px`;
+  ripple.style.top = `${e.clientY}px`;
+  ripple.style.pointerEvents = "none";
+  document.body.appendChild(ripple);
+
+  gsap.to(ripple, {
+    scale: 10,
+    opacity: 0,
+    duration: 1,
+    ease: "power2.out",
+    onComplete: () => ripple.remove()
+  });
+});
+
+
+gsap.fromTo(newSpan, 
+  { opacity: 0, fontSize: "10px", rotation: -10 },
+  {
+    opacity: 1,
+    fontSize: "90px",
+    rotation: 0,
+    duration: animationTime * 0.8,
+    ease: "elastic.out(1, 0.5)"
+  }
+);
+
+
+function splitTextByWords(text, wordsPerLine = 5) {
+  const words = text.trim().split(/\s+/); // 空白で分割
+  const lines = [];
+
+  for (let i = 0; i < words.length; i += wordsPerLine) {
+    lines.push(words.slice(i, i + wordsPerLine).join(" "));
+  }
+
+  return lines;
+}
+
+
+
+function prepareText() {
+  let input = document.getElementById("userInput").value;
+  const groupedLines = splitTextByWords(input, 5); // 5語ごとに分割
+  sentences = groupedLines.filter(s => s.length > 0);
+  index = -1;
+  document.getElementById("text").innerHTML = "";
+  document.body.removeEventListener("click", nextSentenceHandler);
+  document.body.addEventListener("click", nextSentenceHandler);
+}
+
+
+
+
+
+function nextSentenceHandler() {
+  const textContainer = document.getElementById("text");
+
+  // すでに表示されているテキストがあるか確認
+  const currentSpan = textContainer.querySelector("span");
+
+  if (currentSpan) {
+    // フェードアウトしてから次のテキストを表示
+    gsap.to(currentSpan, {
+      opacity: 0,
+      duration: 0.5,
+      onComplete: () => {
+        currentSpan.remove();
+        showNextSentence();
+      }
+    });
+  } else {
+    // 最初のクリック時など、直接表示
+    showNextSentence();
+  }
+}
+
+function showNextSentence() {
+  if (index < sentences.length - 1) {
+    index++;
+    const textContainer = document.getElementById("text");
+
+    const newSpan = document.createElement("span");
+    newSpan.textContent = sentences[index];
+    newSpan.classList.add("animated-text");
+    textContainer.appendChild(newSpan);
+
+    let animationTime = parseFloat(document.getElementById("animationTime").value) || 3;
+
+    // フェードインと拡大
+    gsap.fromTo(newSpan,
+      { opacity: 0, fontSize: "10px" },
+      {
+        opacity: 1,
+        fontSize: "90px",
+        duration: animationTime * 0.8,
+        ease: "power2.out"
+      }
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function nextSentenceHandler() {
+      if (index < sentences.length - 1) {
+        index++;
+        document.getElementById("text").innerHTML = "";
+
+        let newSpan = document.createElement("span");
+        newSpan.textContent = sentences[index];
+        newSpan.classList.add("animated-text");
+        document.getElementById("text").appendChild(newSpan);
+
+        let animationTime = parseFloat(document.getElementById("animationTime").value) || 3;
+
+        gsap.fromTo(newSpan,
+          { opacity: 0, fontSize: "10px" },
+          {
+            opacity: 1,
+            fontSize: "90px",
+            duration: animationTime * 0.8,
+            ease: "power2.out",
+            onComplete: () => {
+              gsap.to(newSpan, {
+                opacity: 0,
+                fontSize: "600px",
+                duration: animationTime * 0.2,
+                ease: "power2.in"
+              });
             }
-        }
-      
-    </script>
+          }
+        );
+      }
+    }
+  </script>
 </body>
 </html>
